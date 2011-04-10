@@ -84,7 +84,7 @@ class FavoriteBehavior extends ModelBehavior {
 		$favoriteAlias = $this->settings[$Model->alias]['favoriteAlias'];
 
 		$Model->bindModel(array('hasMany' => array(
-			'Favorite' => array(
+			$favoriteAlias => array(
 				'className' => $favoriteClass,
 				'foreignKey' => $this->settings[$Model->alias]['foreignKey'],
 				'conditions' => array($favoriteAlias . '.model' => $Model->name),
@@ -131,21 +131,22 @@ class FavoriteBehavior extends ModelBehavior {
 			}
 		}
 	
-		$existing = $Model->Favorite->find('count', array(
+		$favoriteAlias = $this->settings[$Model->alias]['favoriteAlias'];
+		$existing = $Model->{$favoriteAlias}->find('count', array(
 			'conditions' => array(
-				'Favorite.user_id' => $userId,
-				'Favorite.model' => $modelName,
-				'Favorite.type' => $type,
-				'Favorite.foreign_key' => $foreignKey)));
+				$favoriteAlias . '.user_id' => $userId,
+				$favoriteAlias . '.model' => $modelName,
+				$favoriteAlias . '.type' => $type,
+				$favoriteAlias . '.foreign_key' => $foreignKey)));
 		if ($existing > 0) {
 			throw new Exception(__d('favorites', 'Already added.', true));
 		}
 		
 		if (array_key_exists($type, $this->favoriteTypes) && !is_null($this->favoriteTypes[$type]['limit'])) {
-			$currentCount = $Model->Favorite->find('count', array(
+			$currentCount = $Model->{$favoriteAlias}->find('count', array(
 				'conditions' => array(
-					'Favorite.user_id' => $userId,
-					'Favorite.type' => $type)));
+					$favoriteAlias . '.user_id' => $userId,
+					$favoriteAlias . '.type' => $type)));
 			if ($currentCount >= $this->favoriteTypes[$type]['limit']) {
 				throw new Exception(sprintf(
 					__d('favorites', 'You cannot add more than %s items to this list', true),
@@ -159,8 +160,8 @@ class FavoriteBehavior extends ModelBehavior {
 			'foreign_key' => $foreignKey,
 			'type' => $type,
 			'position' => $this->_getNextPosition($Model, $userId, $modelName, $type));
-		$Model->Favorite->create($data);
-		$result = $Model->Favorite->save();
+		$Model->{$favoriteAlias}->create($data);
+		$result = $Model->{$favoriteAlias}->save();
 		if ($result && method_exists($Model, 'afterSaveFavorite')) {
 			$result = $Model->afterSaveFavorite(array('id' => $foreignKey, 'userId' => $userId, 'model' => $modelName, 'type' => $type, 'data' => $result));
 		}
@@ -178,12 +179,13 @@ class FavoriteBehavior extends ModelBehavior {
  */
 	protected function _getNextPosition($Model, $userId, $modelName, $type) {
 		$position = 0;
-		$max = $Model->Favorite->find('first', array(
-			'fields' => array('MAX(Favorite.position) AS max_position'),
+		$favoriteAlias = $this->settings[$Model->alias]['favoriteAlias'];
+		$max = $Model->{$favoriteAlias}->find('first', array(
+			'fields' => array('MAX(' . $favoriteAlias . '.position) AS max_position'),
 			'conditions' => array(
-				'Favorite.user_id' => $userId,
-				'Favorite.model' => $modelName,
-				'Favorite.type' => $type)));
+				$favoriteAlias . '.user_id' => $userId,
+				$favoriteAlias . '.model' => $modelName,
+				$favoriteAlias . '.type' => $type)));
 		if (isset($max[0]['max_position'])) {
 			$position = $max[0]['max_position'] + 1;
 		}
