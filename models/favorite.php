@@ -361,15 +361,9 @@ class Favorite extends AppModel {
 		}
 		$record = $record[$this->alias];
 		$model = $record['model'];
-		$result = $this->delete($id);
-		if ($result) {
-			$Model = ClassRegistry::init($model);
-			if (method_exists($Model, 'afterDeleteFavorite')) {
-				$result = $Model->afterDeleteFavorite(array('id' => $record['foreign_key'], 'userId' => $record['user_id'], 'model' => $model, 'type' => $record['type']));
-			}
-			return $result;
-		}
-		return $result;
+
+		$Subject = ClassRegistry::init($model);
+
+		return $Subject->removeFavorite($id);
 	}
-	
 }

@@ -191,4 +191,26 @@ class FavoriteBehavior extends ModelBehavior {
 		}
 		return $position;
 	}
+
+	public function removeFavorite(Model $Model, $id) {
+		$favoriteAlias = $this->settings[$Model->alias]['favoriteAlias'];
+
+		$record = $Model->{$favoriteAlias}->read(null, $id);
+		$record = $record[$favoriteAlias];
+
+		if (method_exists($Model, 'beforeDeleteFavorite')) {
+			$result = $Model->beforeSaveFavorite(array('id' => $id, 'userId' => $record['user_id'], 'model' => $record['model'], 'type' => $record['type']));
+			if (!$result) {
+				throw new Exception(__d('favorites', 'Operation is not allowed', true));
+			}
+		}
+
+		$result = $Model->{$favoriteAlias}->delete($id);
+	
+		if ($result && method_exists($Model, 'afterDeleteFavorite')) {
+			$result = $Model->afterDeleteFavorite(array('id' => $id, 'userId' => $record['user_id'], 'model' => $record['model'], 'type' => $record['data']));
+		}
+
+		return $result;
+	}
 }
