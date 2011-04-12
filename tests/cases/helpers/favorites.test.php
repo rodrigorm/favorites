@@ -86,4 +86,11 @@ class FavoritesHelperTestCase extends CakeTestCase {
 		$result = $this->Favorites->toggleFavorite('watch', 'my-thing-id', null, 'Stop watching');
 		$this->assertEqual($result, '<a href="/favorites/favorites/delete/0" class="remove-favorite watch">Stop watching</a>');
 	}
+
+	public function testIsFavorite() {
+		$this->View->viewVars['userFavorites'] = array('watch' => array('my-thing-id'));
+		$this->Favorites->beforeRender();
+		$result = $this->Favorites->isFavorite('watch', 'my-thing-id');
+		$this->assertTrue($result);
+	}
 }

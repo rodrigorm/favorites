@@ -85,7 +85,7 @@ class FavoritesHelper extends AppHelper {
 			}
 			$options['class'] = $type . ' ' . $options['class'];
 			
-			$remove = array_key_exists($type, $this->_userFavorites) && in_array($id, $this->_userFavorites[$type]);
+			$remove = $this->isFavorite($type, $id);
 			if ($remove) {
 				$url = array_merge($this->favoriteLinkBase, array(
 					'action' => 'delete',
@@ -103,5 +103,9 @@ class FavoritesHelper extends AppHelper {
 		}
 		
 		return $link;
+	}
+
+	public function isFavorite($type, $id) {
+		return array_key_exists($type, $this->_userFavorites) && in_array($id, $this->_userFavorites[$type]);
 	}
 }
