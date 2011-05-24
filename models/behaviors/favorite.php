@@ -92,14 +92,16 @@ class FavoriteBehavior extends ModelBehavior {
 				'dependent' => true,
 		))), false);
 
-		$Model->{$favoriteAlias}->bindModel(array('belongsTo' => array(
-			$Model->alias => array(
-				'className' => $Model->name,
-				'foreignKey' => $this->settings[$Model->alias]['foreignKey'],
-				'fields' => '',
-				'counterCache' => $this->settings[$Model->alias]['counterCache']
-			),
-		)), false);
+		if (!isset($Model->{$favoriteAlias}->{$Model->alias})) {
+			$Model->{$favoriteAlias}->bindModel(array('belongsTo' => array(
+				$Model->alias => array(
+					'className' => $Model->name,
+					'foreignKey' => $this->settings[$Model->alias]['foreignKey'],
+					'fields' => '',
+					'counterCache' => $this->settings[$Model->alias]['counterCache']
+				),
+			)), false);
+		}
 		
 		$types = Configure::read('Favorites.types');
 		$this->favoriteTypes = array();
