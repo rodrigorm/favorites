@@ -223,7 +223,7 @@ class FavoritesControllerTest extends CakeTestCase {
  */
 	public function testAddJson() {
 		$this->Favorites->Auth
-			->expects($this->any())
+			->staticExpects($this->any())
 			->method('user')
 			->with('id')
 			->will($this->returnValue(1));
