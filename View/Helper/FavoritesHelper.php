@@ -47,10 +47,7 @@ class FavoritesHelper extends AppHelper {
  * @return void
  */
 	public function beforeRender() {
-		if (ClassRegistry::isKeySet('view')) {
-			$View = ClassRegistry::getObject('view');
-			$this->_userFavorites = $View->getVar('userFavorites');
-		}
+		$this->_userFavorites = $this->_View->getVar('userFavorites');
 	}
 
 
