@@ -19,44 +19,44 @@ class FavoritesHelper extends AppHelper {
 
 /**
  * Controller action to use as favorite endpoint (CakePHP url)
- * 
+ *
  * @var array
  */
 	public $favoriteLinkBase = array('admin' => false, 'plugin' => 'favorites', 'controller' => 'favorites');
-	
+
 /**
  * Helpers
- * 
+ *
  * @var array
- */	
+ */
 	public $helpers = array('Html', 'Session', 'Js' => 'Jquery', 'Time');
-	
+
 /**
  * User favorites - initialized in beforeRender
  * Contains the "userFavorites" variable transmitted to views by the controller
- * Format: array(type => array(favorite-id => item-id))  
- * 
+ * Format: array(type => array(favorite-id => item-id))
+ *
  * @var array
  */
 	protected $_userFavorites = array();
-	
+
 /**
  * Before render callback
  * Initializes the Helper
- * 
+ *
  * @return void
  */
-	public function beforeRender() {
+	public function beforeRender($viewFile) {
 		$this->_userFavorites = $this->_View->getVar('userFavorites');
 	}
 
 
 /**
  * Displays a correct link to add / remove an item from a given favorite list
- * 
+ *
  * If the current user already added the item to the list, the generated link will allow him to
  * remove it from the list otherwise it will generate an add link
- * 
+ *
  * @param string $type Favorite type
  * @param string $id Item id
  * @param string $addText Text to use for "add" type links
@@ -80,7 +80,7 @@ class FavoritesHelper extends AppHelper {
 				$options['class'] = '';
 			}
 			$options['class'] = $type . ' ' . $options['class'];
-			
+
 			$remove = $this->isFavorite($type, $id);
 			if ($remove) {
 				$url = array_merge($this->favoriteLinkBase, array(
@@ -94,10 +94,10 @@ class FavoritesHelper extends AppHelper {
 				$options['class'] = 'add-favorite ' . $options['class'];
 			}
 			$options['class'] = trim($options['class']);
-			
+
 			$link = $this->Html->link($linkText, $url, $options);
 		}
-		
+
 		return $link;
 	}
 
